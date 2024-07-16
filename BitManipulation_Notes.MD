@@ -1,6 +1,6 @@
 #### Question-1
 
-Given a positive integer N, print count of set bits in it.
+Given a positive integer N, print count of set bits in it and return the count.
 
 Input: 6 (110)
 OUTPUT: 2
