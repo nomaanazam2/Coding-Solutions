@@ -94,6 +94,9 @@ You are given two numbers A and B. The task is to count the number of bits neede
 
 #### Solution-3
 
+1. Take XOR of given two numbers (say `xor_val`).
+2. Find number of set bits in `xor_val`
+
 ```PY
 def countBitsFlip(a,b):
     xor_val = a ^ b
@@ -116,7 +119,18 @@ You are given a number N. Find the total count of set bits for all numbers from 
 
 #### Solution-4
 
-Add the digits in vertial orders of bit from Left to Right
+Add the digits in vertial orders of bit from Left to Right.
+At each vertial do the following.
+
+1. Get `block_size` (For digit length = 4, block sizes will be 8, 4, 2, 1)
+2. Get `total_complete_block`
+3. Get `leftover_block_size`
+4. ```PY
+   If total_complete_block is ODD:
+        sum = block_size * (total_complete_block // 2) + leftover_block_size
+   else:
+        sum = block_size * (total_complete_block // 2)
+   ```
 
 ```PY
 def get_digitLength(n):
@@ -208,7 +222,7 @@ def findPosition(N):
 Given two numbers X and Y, and a range [L, R] where 1 <= L <= R <= 32. You have to copy the set bits of 'Y' in the range L to R in 'X'. Return this modified X.
 
 Input : x = 10, y = 13, l = 2, r = 3 \
-Output : x = 14 \
+Output : x = 14
 
 Binary representation of 10 is 1010 and
 that of y is 1101. There is one set bit
@@ -217,6 +231,15 @@ After we copy this bit to x, x becomes 1110
 which is binary representation of 14.
 
 #### Solution-7
+
+1. Iterate through every digit of Y.
+2. If a digit is a set bit and lie in the range [l, r] position. do the following
+   1. Get perfect square number of current digit position (this will have only one '1' at the current digit position)
+   2. ```PY
+      # Check if this postion if x is set or unset
+      If (x >> (position - 1)) % 2 == 0:
+        x =  x ^ (perfect_square_number)
+      ```
 
 ```PY
 def setSetBit(x, y, l, r):

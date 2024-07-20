@@ -5,7 +5,7 @@ Given a root of a binary tree with n nodes, find its level order traversal.
 #### Solution-1:
 
 **Approach-1**
-Create dictionary with keys as depth of the tree and append the tree data in its corrosponding Depth
+Create dictionary with keys as depth of the tree and append the tree data in its corrosponding Depth. [Recursive solution]
 
 Time Complexity: O(n) \
 Space Complexity: O(n)
@@ -74,11 +74,11 @@ def levelOrder(root):
 
 #### Question-2:
 
-Given a binary tree of size n, find its reverse level order traversal. ie- the traversal must begin from the last level.
+Given a binary tree of size n, find its reverse level order traversal. ie- the traversal must begin from the last level from left to right.
 
 #### Solution-2:
 
-Same as above exect in Queue first insert right child then left child. Reverse the final list
+Same as above exect in Queue first insert right child then left child. Store all the values in the list and finally Reverse the list
 
 ```PY
 def reverseLevelOrder(root):
@@ -107,6 +107,12 @@ Given a binary tree, find its height.
 
 #### Solution-3:
 
+Do Recursive traversal
+
+1. Get left subtree height
+2. Get right subtree height
+3. return `max(left_height, right_height) + 1`
+
 ```PY
 def treeHeight(root, h):
     if root == None:
@@ -124,21 +130,29 @@ The diameter of a tree (sometimes called the width) is the number of nodes on th
 
 #### Solution-4:
 
+Do Recursive traversal
+
+1. Get left subtree height
+2. Get right subtree height
+3. mentain `diameter_value` as global variable
+4. if `left_height + right_height + 1 < diameter_value` then update `diameter_value`
+5. return `max(left_height, right_height) + 1`
+
 ```PY
 maxDiameter = 0
 
 def getDiameter(root):
     if root == None:
         return 0
-    d1 = getDiameter(root.left)
-    d2 = getDiameter(root.right)
-    if maxDiameter < d1 + d2 +1:
-        maxDiameter = d1 + d2 + 1
-    return max(d1, d2) + 1
+    h1 = getDiameter(root.left)
+    h2 = getDiameter(root.right)
+    if maxDiameter < h1 + h2 +1:
+        maxDiameter = h1 + h2 + 1
+    return max(h1, h2) + 1
 
 def diameter(root):
     maxDiameter = 0
-    getDiameter(root, 0)
+    getDiameter(root)
     return maxDiameter
 ```
 
@@ -149,6 +163,23 @@ Given a binary tree, the task is to create a new binary tree which is a mirror i
 #### Solution-5
 
 swap left child and right child at every node
+
+```PY
+def getDiameter(root):
+    if root == None:
+        return None
+
+    if root.left == None and root.right == None:
+        return root
+
+    left_tree = getDiameter(root.left)
+    right_tree = getDiameter(root.right)
+
+    root.left = right_tree
+    root.right = left_tree
+
+    return root
+```
 
 #### Question-6
 
@@ -232,6 +263,7 @@ def topView(root):
 
     final_list = []
     object_list = {}
+    # [[Root Node, vertial Line No]]
     Q = [[root,0]]
 
     min_lineNo = None
@@ -240,13 +272,13 @@ def topView(root):
     while len(Q) >0:
         curr_obj = Q.pop(0)
         curr_lineNo = curr_obj[1]
+        curr_node = curr_obj[0]
 
         if min_lineNo == None or curr_lineNo < min_lineNo:
             min_lineNo = curr_lineNo
 
         if max_lineNo == None or curr_lineNo > max_lineNo:
             max_lineNo = curr_lineNo
-        curr_node = curr_obj[0]
 
         if curr_lineNo not in object_list:
             object_list[curr_lineNo] = curr_node.data
@@ -269,7 +301,7 @@ Given a binary tree, print the bottom view from left to right. A node is include
 
 #### Solution-9
 
-Same concept as in Top view (`The vertial line Concept`). Only change is that now in the dictionary replace the node at each level as and when new nodes comes. Henc in this way you will be getting last and the right most node (if level order traversal done from left to right).
+Same concept as in Top view (`The vertial line Concept`). Only change is that now in the dictionary replace the node at each level as and when new nodes comes. Hence in this way you will be getting last and the right most node (if level order traversal done from left to right).
 
 ```PY
 def bottomView(root):
@@ -361,16 +393,16 @@ Logic is similar to finding getting height at each node from left and right and 
 def is_tree_balanced(root):
         if root == None:
             return 0,1   # Height, Balanced or not
-        h1, b1 = is_tree_balanced(root.left)
-        h2, b2 = is_tree_balanced(root.right)
-        if abs(h2 - h1) >1:
-            return max(h1,h2) + 1, 0
+        h1, is_balanced1 = is_tree_balanced(root.left)
+        h2, is_balanced2 = is_tree_balanced(root.right)
+        if abs(h2 - h1) > 1:
+            return max(h1, h2) + 1, 0
         else:
-            return max(h1,h2) +1, b1 and b2
+            return max(h1, h2) + 1, is_balanced1 and is_balanced2
 
     def isBalanced(root):
-        h,b = is_tree_balanced(root)
-        return b
+        height, is_balanced = is_tree_balanced(root)
+        return is_balanced
 ```
 
 #### Question-12
@@ -421,10 +453,10 @@ def get_leafNodes(root):
     if root.left == None and root.right == None:
         return [root.data]
 
-    left_node = get_leafNodes(root.left)
-    right_node = get_leafNodes(root.right)
+    left_leaf = get_leafNodes(root.left)
+    right_leaf = get_leafNodes(root.right)
 
-    return left_node + right_node
+    return left_leaf + right_leaf
 
 # Main Solution
 def printBoundaryView(root):
@@ -480,6 +512,16 @@ Output:
 ```
 
 #### Solution-14
+
+`Method-1:` Create root node, get left sub tree string and right sub tree string. recursively traverse left and right.
+
+Time complexity: $O(n^2)$
+
+`Method-2:` Create root node, if `(` go right else if ')' return if again `(` go left. For this solution mentain the global index
+
+Time complexity: $O(n)$
+
+**Method-1**
 
 ```PY
 def get_LeftRight_str(str):
@@ -578,6 +620,8 @@ def get_LeftRight_str(str):
 
 Time Complexity: $O(n^2)$
 
+**Method-2**
+
 ```PY
 index = 0
 def getNode(val):
@@ -637,13 +681,19 @@ Given a Binary Tree (BT), convert it to a Doubly Linked List(DLL) In-Place. The 
 
 #### Solution-15
 
+Do recusrive traversal
+
+1. Get head and tail of left and right subtree
+2. Create DLL for root, left subtree and right sub tree
+3. return the DLL
+
 ```PY
 def get_DLL(root):
     if root == None:
-        return None,None
+        return None, None
 
     if root.left == None and root.right == None:
-        return root,root
+        return root, root  # returning Tail, Head which is same
 
     LHead, LTail = get_DLL(root.left)
     RHead, RTail = get_DLL(root.right)
@@ -715,6 +765,59 @@ The task is to find the minimum number of swaps required to convert it into a Bi
 
 #### Solution-17
 
+**Theory**
+
+Lets understand how minim swaps required to sort an array works
+
+```
+input: 5, 0, 4, 2, 1, 3
+
+SET(value, index) => (5, 0) (0, 1) (4, 2) (2, 3) (1, 4) (3, 5)
+
+Sorted order: (1, 4) (2, 3) (3, 5) (4, 2) (5, 0)
+
+Instead of finding the swaps needed to sort the list,
+find the minimum swaps required to convert the sorted list
+back to the original list (as both approaches yield the same result).
+
+Pick any element 𝐸𝑖, swap it with the element at the
+𝑖-th index, and repeat until the index matches 𝑖.
+Then, pick the next element and continue. next element.
+
+ALGORITHM
+--------
+total_swaps = 0
+for i in range(len(A)):
+    curr_index = A[i][1]
+    if i == curr_index:
+        continue
+    swap(A[i], A[curr_index])
+    total_swaps = total_swaps + 1
+    # Do not increament i untill i == curr_index
+    i = i - 1
+```
+
+Note
+
+1. This algoritm is not restricted to sorting, you can find minimum swaps where target list is in any specific order (sorted in our case)
+2. If a list contains a continuous range of numbers, you can sort it in O(n) time complexity using the following algorithm: \
+    Example: -2, 4, -1, 3, 0, 2, 1
+
+   1. Subtract each element from the largest number in the list.
+
+   Result: 6, 0, 5, 1, 4, 2, 3
+
+   2. Instead of swapping based on index, swap based on values to get the sorted list.
+   3. Finally, add the largest number to each element.
+
+**Solution**
+
+If given binary tree is BST then its in-order traversel will be sorted. Hence solution boils down to
+
+1. Find the in-order traversal and store in array
+2. Find the minimum swaps required to sort the array
+3. We observe that given input list will always be sorted
+
 ```PY
 def inOrderTraversal(arr, i,inorder_list):
     if i >= len(arr):
@@ -744,6 +847,12 @@ def getMinSwaps(inorder_list):
     return total_swaps
 ```
 
+**Note:** If input list is not sorted then above code will slightly change as follows.
+
+1. Sort the input list and determine the minimum swaps required in this step.
+2. Obtain the inorder list from the sorted list and find the minimum swaps needed to make the inorder list sorted.
+3. Sum the total swaps made in the above two steps.
+
 #### Question-18
 
 Given a Binary Tree. Return true if, for every node X in the tree other than the leaves, its value is equal to the sum of its left subtree's value and its right subtree's value. Else return false.
@@ -762,6 +871,8 @@ Therefore,the given binary tree is a sum tree.
 ```
 
 #### Solution-18
+
+Perform a recursive traversal. Get the sum of the left subtree and the right subtree. If the sums match, return the total sum; otherwise, return -1.
 
 ```PY
 def checkSum(root):
@@ -806,7 +917,9 @@ Explanation: The binary tree has a height of 3 and the leaves are not at the sam
 
 #### Solution-19
 
-Solution-1
+**Recursive Solution**
+
+For every node, if both its left and right subtrees exist, their heights must be exactly the same.
 
 ```PY
 def get_flag(root):
@@ -835,7 +948,8 @@ def check(root):
         return True
 ```
 
-Solution-2
+**Iterative Solution** \
+Every leaf node should have the same height. Perform a level order traversal while keeping track of the height at each level. When the first leaf is encountered, update the leaf_height. For every subsequent leaf, check if its height matches leaf_height.
 
 ```PY
 def check(root):
@@ -876,7 +990,22 @@ def check(root):
 
 Given a binary tree having n nodes. Find the sum of all nodes on the longest path from root to any leaf node. If two or more paths compete for the longest path, then the path having maximum sum of nodes will be considered.
 
+```
+Input:
+         4
+       /   \
+      2     5
+     / \   / \
+    7   1 2   3
+       /
+      6
+
+Output: (4 + 2 + 1 + 6) = 13
+```
+
 #### Solution-20
+
+Perform a recursive traversal to get the sum and height of the left subtree and the right subtree. Based on the heights, return the results.
 
 ```PY
 def get_longestPathSum(root):
